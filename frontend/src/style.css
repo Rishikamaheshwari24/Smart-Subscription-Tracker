@@ -1,0 +1,93 @@
+/* =========================
+   LOGIN + SIGNUP (SIMPLE)
+========================= */
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6fb;
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 320px;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.title {
+  font-size: 22px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.button {
+  width: 100%;
+  padding: 10px;
+  background: #4a6cf7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+
+/* =========================
+   DASHBOARD (MODERN)
+========================= */
+
+.dashboard {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.card2 {
+  width: 430px;
+
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.3);
+
+  padding: 25px;
+  color: white;
+}
+
+.sub-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  margin-top: 10px;
+
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+}
+
+.sub-item button {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
