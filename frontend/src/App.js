@@ -1,46 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
 import Login from "./Login";
 import Signup from "./Signup";
 import Dashboard from "./Dashboard";
 
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
 function App() {
-  const [page, setPage] = useState("login");
-  const [token, setToken] = useState(null);
-
-  const login = (t) => {
-    setToken(t);
-  };
-
-  if (token) {
-    return (
-      <>
-        <Dashboard />
-        <ToastContainer position="top-right" />
-      </>
-    );
-  }
+  const token = localStorage.getItem("token");
 
   return (
-    <>
-      {page === "login" && (
-        <Login
-          setToken={login}
-          goToSignup={() => setPage("signup")}
-        />
-      )}
+    <Router>
 
-      {page === "signup" && (
-        <Signup
-          goToLogin={() => setPage("login")}
-        />
-      )}
+      <Routes>
 
-      {/* ✅ IMPORTANT: Toast here */}
-      <ToastContainer position="top-right" />
-    </>
+        <Route path="/" element={<Navigate to="/login" />} />
+
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/signup" element={<Signup />} />
+
+        <Route
+          path="/dashboard"
+          element={
+            token ? <Dashboard /> : <Navigate to="/login" />
+          }
+        />
+
+      </Routes>
+    </Router>
   );
 }
 

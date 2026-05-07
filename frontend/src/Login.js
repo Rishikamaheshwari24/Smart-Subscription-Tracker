@@ -1,78 +1,62 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
 
-function Login({ setToken, goToSignup }) {
-  const [form, setForm] = useState({ email: "", password: "" });
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
+  const navigate = useNavigate();
 
-  try {
-    const res = await axios.post(
-      "http://localhost:5000/api/auth/login",
-      {
-        email: form.email,
-        password: form.password
-      }
-    );
+  const handleLogin = async () => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password
+      });
 
-    localStorage.setItem("token", res.data.token);
-    setToken(res.data.token);
+      localStorage.setItem("token", res.data.token);
 
-  } catch (err) {
-    console.log("Login error");
-  }
-};
+      navigate("/dashboard");
+
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+      alert("Login Failed ❌");
+    }
+  };
 
   return (
-    <div className="container">
-      <form onSubmit={handleSubmit} className="card">
+    <div className="auth-container">
 
-        <h2 className="title">Welcome Back 👋</h2>
+      <div className="auth-left"></div>
 
-        {/* EMAIL */}
-        <input
-          className="input"
-          type="email"
-          placeholder="Email"
-          required
-          onChange={(e) =>
-            setForm({ ...form, email: e.target.value })
-          }
-        />
+      <div className="auth-right">
+        <div className="auth-card">
 
-        {/* PASSWORD */}
-        <input
-          type="password"
-          className="input"
-          placeholder="Password"
-          required
-          onChange={(e) =>
-            setForm({ ...form, password: e.target.value })
-          }
-        />
+          <h2>🔐 Login</h2>
 
-        {/* LOGIN BUTTON */}
-        <button className="button" type="submit">
-          Login
-        </button>
+          <input
+            placeholder="📧 Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        {/* SIGNUP SWITCH */}
-        <button
-          type="button"
-          onClick={goToSignup}
-          style={{
-            marginTop: "10px",
-            background: "transparent",
-            border: "none",
-            color: "blue",
-            cursor: "pointer"
-          }}
-        >
-          Create Account
-        </button>
+          <input
+            type="password"
+            placeholder="🔑 Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-      </form>
+          <button onClick={handleLogin}>🚀 Login</button>
+
+          <p>
+            Don't have an account? <Link to="/signup">Sign Up</Link>
+          </p>
+
+        </div>
+      </div>
+
     </div>
   );
 }

@@ -20,7 +20,7 @@ const isExpiringSoon = (date) => {
     return diff >= 0 && diff <= 5;
 };
 
-// 🎯 CATEGORY EMOJI
+// 🎯 EMOJI
 const getEmoji = (category) => {
     switch (category?.toLowerCase()) {
         case "entertainment": return "🎬";
@@ -34,10 +34,7 @@ const getEmoji = (category) => {
 
 function Dashboard() {
 
-    // 🌙 DARK MODE
     const [darkMode, setDarkMode] = useState(true);
-
-    // 📄 PAGE CONTROL
     const [activePage, setActivePage] = useState("dashboard");
 
     const [subs, setSubs] = useState([]);
@@ -52,7 +49,7 @@ function Dashboard() {
 
     const token = localStorage.getItem("token");
 
-    // 📥 FETCH DATA
+    // 📥 FETCH
     const fetchSubs = async () => {
         try {
             const res = await axios.get(
@@ -74,19 +71,16 @@ function Dashboard() {
     }, []);
 
     // 🔔 NOTIFICATIONS
-    const getNotifications = () => {
+    const notifications = subs.filter((s) => {
         const today = new Date();
+        const renewal = new Date(s.renewalDate);
 
-        return subs.filter((s) => {
-            const renewal = new Date(s.renewalDate);
-            const diff = Math.ceil(
-                (renewal - today) / (1000 * 60 * 60 * 24)
-            );
-            return diff >= 0 && diff <= 5;
-        });
-    };
+        const diff = Math.ceil(
+            (renewal - today) / (1000 * 60 * 60 * 24)
+        );
 
-    const notifications = getNotifications();
+        return diff >= 0 && diff <= 5;
+    });
 
     // ✏️ EDIT
     const handleEdit = (sub) => {
@@ -120,9 +114,7 @@ function Dashboard() {
                         }
                     }
                 );
-
-                toast.success("Updated Successfully ✏️");
-
+                toast.success("Updated ✏️");
             } else {
                 await axios.post(
                     "http://localhost:5000/api/subscriptions",
@@ -139,8 +131,7 @@ function Dashboard() {
                         }
                     }
                 );
-
-                toast.success("Added Successfully ✅");
+                toast.success("Added ✅");
             }
 
             setForm({
@@ -154,7 +145,7 @@ function Dashboard() {
 
         } catch (err) {
             console.log(err);
-            toast.error("Update failed ❌");
+            toast.error("Failed ❌");
         }
     };
 
@@ -172,15 +163,12 @@ function Dashboard() {
         }
     };
 
-    // 💰 TOTAL
     const total = subs.reduce((sum, s) => sum + Number(s.cost), 0);
 
-    // 🔍 SEARCH
     const filteredSubs = subs.filter((s) =>
         s.name.toLowerCase().includes(search.toLowerCase())
     );
 
-    // 📊 CHART DATA
     const chartData = subs.map((s) => ({
         name: s.name,
         cost: s.cost
@@ -190,68 +178,59 @@ function Dashboard() {
         <div className={darkMode ? "dark" : "light"}>
 
             <div className="dashboard-layout">
-                {activePage === "profile" && (
-                    <div className="profile-card">
 
-                        <div className="profile-header">
-                            <div className="avatar">👤</div>
-                            <h2>User Profile</h2>
-                            <p>user@gmail.com</p>
-                        </div>
+                {/* SIDEBAR */}
+                <Sidebar setActivePage={setActivePage} activePage={activePage} />
 
-                        <div className="profile-stats">
-                            <div className="stat-box">
-                                <h3>📦 {subs.length}</h3>
-                                <p>Subscriptions</p>
-                            </div>
-
-                            <div className="stat-box">
-                                <h3>💰 ₹{total}</h3>
-                                <p>Total Spend</p>
-                            </div>
-                        </div>
-
-                        <button
-                            className="logout-btn"
-                            onClick={() => {
-                                localStorage.removeItem("token");
-                                window.location.href = "/";
-                            }}
-                        >
-                            🚪 Logout
-                        </button>
-
-                    </div>
-                )}
-
-                {/* 🌙 DARK TOGGLE */}
-                <div className="top-bar">
-                    <button
-                        className="theme-btn"
-                        onClick={() => setDarkMode(!darkMode)}
-                    >
-                        {darkMode ? "🌙" : "☀️"}
-                    </button>
-                </div>
-
-                {/* ✅ SIDEBAR */}
-                <Sidebar
-                    setActivePage={setActivePage}
-                    activePage={activePage}
-                />
-
-                {/* ✅ MAIN CONTENT */}
+                {/* MAIN */}
                 <div className="main-content">
 
-                    {/* 📊 DASHBOARD */}
+                    {/* 🔥 TOP NAVBAR */}
+                    <div className="topbar">
+
+                        <h2>📊 Dashboard</h2>
+
+                        <div className="topbar-right">
+
+                            {/* 🌙 THEME */}
+                            <button
+                                className="toggle-btn"
+                                onClick={() => setDarkMode(!darkMode)}
+                            >
+                                {darkMode ? "🌙" : "☀️"}
+                            </button>
+
+                            {/* 👤 PROFILE */}
+                            <div
+                                className="avatar"
+                                onClick={() => setActivePage("profile")}
+                            >
+                                👤
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {/* ================= DASHBOARD ================= */}
                     {activePage === "dashboard" && (
                         <>
-                            <h2>📊 Dashboard</h2>
+                            <div className="stats">
+                                <div className="stat-card">
+                                    <h4>Total Expense</h4>
+                                    <h2>₹{total}</h2>
+                                </div>
 
-                            <h3>💰 ₹{total}</h3>
-                            <h3>📦 {subs.length} Subscriptions</h3>
+                                <div className="stat-card">
+                                    <h4>Subscriptions</h4>
+                                    <h2>{subs.length}</h2>
+                                </div>
 
-                            {/* 🔍 SEARCH */}
+                                <div className="stat-card">
+                                    <h4>Alerts</h4>
+                                    <h2>{notifications.length}</h2>
+                                </div>
+                            </div>
+
                             <div className="search-box">
                                 <input
                                     placeholder="🔍 Search..."
@@ -260,11 +239,8 @@ function Dashboard() {
                                 />
                             </div>
 
-                            {/* FORM */}
                             <div className="card2">
-                                <h3>
-                                    {form._id ? "✏️ Edit" : "➕ Add"}
-                                </h3>
+                                <h3>{form._id ? "✏️ Edit" : "➕ Add"}</h3>
 
                                 <input className="input" placeholder="Name"
                                     value={form.name}
@@ -295,42 +271,63 @@ function Dashboard() {
                                 </button>
                             </div>
 
-                            {/* LIST */}
                             <div className="card2">
-                                <h3>Your Subscriptions</h3>
+                                <h3 className="section-title">💳 Your Subscriptions</h3>
 
-                                {filteredSubs.map((s) => (
-                                    <div key={s._id} className="sub-item">
+                                <div className="subs-grid">
+                                    {filteredSubs.map((s) => {
+                                        const date = new Date(s.renewalDate);
 
-                                        <div>
-                                            <strong>
-                                                {getEmoji(s.category)} {s.name}
-                                            </strong>
+                                        const daysLeft = Math.ceil(
+                                            (date - new Date()) / (1000 * 60 * 60 * 24)
+                                        );
 
-                                            <p>{s.category}</p>
-                                            <p>Renewal: {s.renewalDate}</p>
+                                        return (
+                                            <div key={s._id} className="sub-card">
 
-                                            {isExpiringSoon(s.renewalDate) && (
-                                                <p style={{ color: "yellow" }}>
-                                                    ⚠ Expiring Soon
+                                                {/* TOP */}
+                                                <div className="sub-top">
+                                                    <h4>
+                                                        {getEmoji(s.category)} {s.name}
+                                                    </h4>
+
+                                                    <span className={
+                                                        daysLeft <= 5 ? "badge warning" : "badge success"
+                                                    }>
+                                                        {daysLeft <= 5 ? "Expiring Soon" : "Active"}
+                                                    </span>
+                                                </div>
+
+                                                {/* DETAILS */}
+                                                <p className="sub-category">{s.category}</p>
+
+                                                <p className="sub-date">
+                                                    Renewal:{" "}
+                                                    {date.toLocaleDateString("en-IN", {
+                                                        day: "2-digit",
+                                                        month: "short",
+                                                        year: "numeric"
+                                                    })}
                                                 </p>
-                                            )}
-                                        </div>
 
-                                        <div>
-                                            ₹{s.cost}<br />
+                                                {/* PRICE */}
+                                                <h3 className="sub-price">₹{s.cost}</h3>
 
-                                            <button onClick={() => handleEdit(s)}>✏️</button>
-                                            <button onClick={() => deleteSub(s._id)}>🗑️</button>
-                                        </div>
+                                                {/* ACTIONS */}
+                                                <div className="sub-actions">
+                                                    <button onClick={() => handleEdit(s)}>✏️ Edit</button>
+                                                    <button onClick={() => deleteSub(s._id)}>🗑️ Delete</button>
+                                                </div>
 
-                                    </div>
-                                ))}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </>
                     )}
 
-                    {/* 📊 ANALYTICS */}
+                    {/* ================= ANALYTICS ================= */}
                     {activePage === "analytics" && (
                         <div className="card2">
                             <h2>📊 Analytics</h2>
@@ -346,26 +343,34 @@ function Dashboard() {
                         </div>
                     )}
 
-                    {/* 🔔 NOTIFICATIONS */}
-                    {activePage === "notifications" && (
-                        <div className="card2">
-                            <h2>🔔 Notifications</h2>
+                    {/* ================= PROFILE ================= */}
+                    {activePage === "profile" && (
+                        <div className="card2 profile-card">
+                            <h2>👤 Profile</h2>
 
-                            {notifications.length === 0
-                                ? <p>No upcoming expiries 🎉</p>
-                                : notifications.map(n => (
-                                    <p key={n._id}>⚠ {n.name} expiring soon</p>
-                                ))
-                            }
+                            <p><strong>Email:</strong> user@gmail.com</p>
+                            <p>📦 {subs.length} Subscriptions</p>
+                            <p>💰 ₹{total}</p>
+
+                            <button
+                                className="logout-btn"
+                                onClick={() => {
+                                    localStorage.removeItem("token");
+                                    window.location.href = "/";
+                                }}
+                            >
+                                🚪 Logout
+                            </button>
                         </div>
                     )}
 
-                    {/* ⚙️ SETTINGS */}
+                    {/* ================= SETTINGS ================= */}
                     {activePage === "settings" && (
                         <div className="card2">
                             <h2>⚙️ Settings</h2>
 
                             <button
+                                className="logout-btn"
                                 onClick={() => {
                                     localStorage.removeItem("token");
                                     window.location.href = "/";

@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -16,9 +18,18 @@ const subscriptionRoutes = require("./routes/subscriptionRoutes");
 app.use("/api/auth", authRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 
+// React Frontend Build Folder
+app.use(express.static(path.join(__dirname, "client/build")));
+
+
 // 🧪 Test Route
 app.get("/", (req, res) => {
   res.send("Server running 🚀");
+});
+
+// React Routing Fix
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build/index.html"));
 });
 
 // 🔗 DB Connection (better version)
